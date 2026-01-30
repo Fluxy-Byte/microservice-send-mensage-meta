@@ -1,0 +1,22 @@
+
+# Comandos para trabalhar com esse microserviço
+
+- Iniciar um ambiente venv e caso ja exista um ambiente apague:
+
+python -m venv .venv
+
+- E para ativar seu ambiente venv use: 
+
+.venv\Scripts\activate
+
+- Caso seu pip não esta atualizado ja garanta esse ajuste:
+
+python.exe -m pip install --upgrade pip
+
+- Apos isso basta instalar as depencencias:
+
+python -m pip install -r requirements.txt
+
+- Comando para rodar o projeto:
+
+uvicorn main:app --reload

@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from src.infra.rabbit.ConectRabbit import conectar, fechar
 
 # =========================
 # CONFIG
@@ -25,7 +26,6 @@ TOKEN_META = os.getenv("TOKEN_META")
 if not TOKEN_META:
     raise Exception("TOKEN_META não definido no .env")
 
-
 # =========================
 # FASTAPI
 # =========================
@@ -35,10 +35,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
 # =========================
 # MODELS
 # =========================
+
 
 class MensagemRequest(BaseModel):
     mensagem: str
@@ -49,10 +49,10 @@ class MensagemRequest(BaseModel):
 class AudioRequest(BaseModel):
     idAudio: str
 
-
 # =========================
 # META - SEND MESSAGE
 # =========================
+
 
 def send_mensagem(mensagem: str, id_mensagem: str, numero_contato: str):
 
@@ -86,10 +86,10 @@ def send_mensagem(mensagem: str, id_mensagem: str, numero_contato: str):
 
     return response
 
-
 # =========================
 # META - GET + TRANSCRIBE
 # =========================
+
 
 def get_audio(id_audio: str):
 
@@ -132,7 +132,6 @@ def get_audio(id_audio: str):
             "status": convert["status"],
             "data": convert["text"]
         }
-
 
     except Exception as e:
 
@@ -179,7 +178,6 @@ def download_audio(audio_url: str):
             "local": filepath
         }
 
-
     except Exception as e:
 
         print("Erro no download:", e)
@@ -207,7 +205,6 @@ def converter_audio(path: str):
             "text": transcription.text
         }
 
-
     except Exception as e:
 
         print("Erro na transcrição:", e)
@@ -217,10 +214,10 @@ def converter_audio(path: str):
             "text": ""
         }
 
-
 # =========================
 # ROUTES
 # =========================
+
 
 @app.post("/send-message")
 def send_message(data: MensagemRequest):
@@ -244,7 +241,6 @@ def send_message(data: MensagemRequest):
             "status": "success",
             "meta_response": response.json()
         }
-
 
     except Exception as e:
 
@@ -272,10 +268,19 @@ def transcribe_audio(data: AudioRequest):
             "mensagem": result["data"]
         }
 
-
     except Exception as e:
 
         raise HTTPException(
             status_code=500,
             detail=str(e)
         )
+
+
+@app.on_event("startup")
+def startup():
+    conectar()
+
+
+@app.on_event("shutdown")
+def shutdown():
+    fechar()
