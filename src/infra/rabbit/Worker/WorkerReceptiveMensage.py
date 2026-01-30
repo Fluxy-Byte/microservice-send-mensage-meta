@@ -2,9 +2,11 @@ import pika
 import json
 from src.infra.meta.SendMensageToMeta import send_mensagem
 
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost')
-)
+RABBIT_URL = "amqp://fluxy:oetF9RhdlKVPQEt3L3aUjRFOBmet9COfmgEZj@147.79.110.10:5672"
+
+params = pika.URLParameters(RABBIT_URL)
+
+connection = pika.BlockingConnection(params)
 
 channel = connection.channel()
 
