@@ -6,8 +6,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-
-
 # =========================
 # CONFIG
 # =========================
@@ -15,13 +13,10 @@ from dotenv import load_dotenv
 # Carrega .env
 load_dotenv()
 
-
-
 TOKEN_META = os.getenv("TOKEN_META")
 
 if not TOKEN_META:
     raise Exception("TOKEN_META não definido no .env")
-
 
 # =========================
 # FASTAPI
@@ -32,10 +27,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
 # =========================
 # MODELS
 # =========================
+
 
 class MensagemRequest(BaseModel):
     mensagem: str
@@ -46,18 +41,32 @@ class MensagemRequest(BaseModel):
 class AudioRequest(BaseModel):
     idAudio: str
 
-
 # =========================
 # META - SEND MESSAGE
 # =========================
 
-def send_mensagem(payload):
+
+def send_mensagem(mensagem: str, id_mensagem: str, numero_contato: str):
 
     url_meta = "https://graph.facebook.com/v22.0/872884792582393/messages"
 
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {TOKEN_META}"
+    }
+
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": numero_contato,
+        "context": {
+            "message_id": id_mensagem
+        },
+        "type": "text",
+        "text": {
+            "preview_url": False,
+            "body": mensagem
+        }
     }
 
     response = requests.post(
