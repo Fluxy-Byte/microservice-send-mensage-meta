@@ -61,7 +61,7 @@ class CampaingRequest(BaseModel):
 
 
 @app.post("/send-campaign")
-def send_campaign(data: CampaingRequest):
+def send_campaign(data: Any):
 
     try:
         response = send_campaing(data.model_dump())
