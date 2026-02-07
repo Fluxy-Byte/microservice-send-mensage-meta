@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
-from typing import List, Any
+from typing import Dict, Any, List
 from src.infra.meta.Audio import get_audio
 from src.infra.meta.SendMensageToMeta import send_mensagem
 from src.infra.meta.SendCampaingToMeta import send_campaing
@@ -61,7 +61,7 @@ class CampaingRequest(BaseModel):
 
 
 @app.post("/send-campaign")
-def send_campaign(data: Any):
+def send_campaign(data: Dict[str, Any]):
 
     try:
         response = send_campaing(data)
@@ -80,7 +80,7 @@ def send_campaign(data: Any):
     except HTTPException:
         raise
 
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail="Erro interno no servidor"
