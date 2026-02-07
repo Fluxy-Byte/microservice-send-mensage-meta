@@ -64,7 +64,7 @@ class CampaingRequest(BaseModel):
 def send_campaign(data: Any):
 
     try:
-        response = send_campaing(data.model_dump())
+        response = send_campaing(data)
 
         if response.status_code >= 400:
             raise HTTPException(
