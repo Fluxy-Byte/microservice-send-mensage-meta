@@ -61,7 +61,7 @@ class CampaingRequest(BaseModel):
 def send_camapanha(data: CampaingRequest):
 
     try:
-
+        print(data)
         response = send_campaing(data)
 
         if response.status_code >= 400:
