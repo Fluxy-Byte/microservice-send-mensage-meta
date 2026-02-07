@@ -57,7 +57,7 @@ class CampaingRequest(BaseModel):
     body: Body
 
 
-@app.post("/send-message")
+@app.post("/send-campaing")
 def send_camapanha(data: CampaingRequest):
 
     try:
