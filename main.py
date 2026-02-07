@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 from typing import List, Any
@@ -48,13 +48,16 @@ class Body(BaseModel):
     messaging_product: str
     recipient_type: str
     to: str
-    type: str
+    message_type: str = Field(..., alias="type")
     template: Template
 
 
 class CampaingRequest(BaseModel):
-    type: str
+    request_type: str = Field(..., alias="type")
     body: Body
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 @app.post("/send-campaign")
@@ -82,7 +85,6 @@ def send_campaign(data: CampaingRequest):
             status_code=500,
             detail="Erro interno no servidor"
         )
-
 
 
 @app.post("/send-message")
