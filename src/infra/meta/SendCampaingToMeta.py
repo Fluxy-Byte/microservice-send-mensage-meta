@@ -1,47 +1,46 @@
 import os
-import time
 import requests
-
-from fastapi import FastAPI
-from pydantic import BaseModel
+import logging
 from dotenv import load_dotenv
 
-# =========================
-# CONFIG
-# =========================
-
-# Carrega .env
 load_dotenv()
 
 TOKEN_META = os.getenv("TOKEN_META")
+PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
 
 if not TOKEN_META:
     raise Exception("TOKEN_META não definido no .env")
 
-# =========================
-# FASTAPI
-# =========================
-
-app = FastAPI(
-    title="Meta WhatsApp API",
-    version="1.0.0"
-)
+if not PHONE_NUMBER_ID:
+    raise Exception("PHONE_NUMBER_ID não definido no .env")
 
 
-def send_campaing(payload):
+logger = logging.getLogger(__name__)
 
-    url_meta = "https://graph.facebook.com/v22.0/872884792582393/messages"
+
+def send_campaing(payload: dict):
+
+    url_meta = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
 
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {TOKEN_META}"
     }
 
-    response = requests.post(
-        url_meta,
-        json=payload,
-        headers=headers,
-        timeout=15
-    )
+    try:
+        response = requests.post(
+            url_meta,
+            json=payload,
+            headers=headers,
+            timeout=15
+        )
 
-    return response
+        logger.info(f"Meta response: {response.status_code}")
+
+        return response
+
+    except requests.exceptions.RequestException as e:
+
+        logger.error(f"Erro ao chamar Meta API: {e}")
+
+        raise Exception("Falha ao se comunicar com a Meta API")

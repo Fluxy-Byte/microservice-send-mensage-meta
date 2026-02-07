@@ -57,15 +57,13 @@ class CampaingRequest(BaseModel):
     body: Body
 
 
-@app.post("/send-campaing")
-def send_camapanha(data: CampaingRequest):
+@app.post("/send-campaign")
+def send_campaign(data: CampaingRequest):
 
     try:
-        print(data)
-        response = send_campaing(data)
+        response = send_campaing(data.model_dump())
 
         if response.status_code >= 400:
-
             raise HTTPException(
                 status_code=response.status_code,
                 detail=response.text
@@ -76,12 +74,15 @@ def send_camapanha(data: CampaingRequest):
             "meta_response": response.json()
         }
 
-    except Exception as e:
+    except HTTPException:
+        raise
 
+    except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=str(e)
+            detail="Erro interno no servidor"
         )
+
 
 
 @app.post("/send-message")

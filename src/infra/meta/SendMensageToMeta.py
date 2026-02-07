@@ -13,9 +13,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOKEN_META = os.getenv("TOKEN_META")
+PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
 
 if not TOKEN_META:
     raise Exception("TOKEN_META não definido no .env")
+
+if not PHONE_NUMBER_ID:
+    raise Exception("PHONE_NUMBER_ID não definido no .env")
 
 # =========================
 # FASTAPI
@@ -47,7 +51,7 @@ class AudioRequest(BaseModel):
 
 def send_mensagem(mensagem: str, id_mensagem: str, numero_contato: str):
 
-    url_meta = "https://graph.facebook.com/v22.0/872884792582393/messages"
+    url_meta = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
 
     headers = {
         "Content-Type": "application/json",
